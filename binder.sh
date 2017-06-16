@@ -14,6 +14,8 @@ INFILE=$1
 OUTFILE=$2
 # Empty sheet
 EMPTYFILE="/tmp/empty.pdf"
+# Temp sheet
+TMPFILE="/tmp/tmpfile.pdf"
 # Pages per sheet
 PPS=4
 # Sheet per booklet
@@ -44,8 +46,10 @@ for i in $(seq 1 $BN); do
 done
 
 # create empty sheet
-convert xc:none -page A4 $EMPTYFILE
+convert xc:none -page A4 "$EMPTYFILE"
 
 # generate out file
-pdftk A=$INFILE B=$EMPTYFILE cat $PAGEORDER output $OUTFILE
-rm $EMPTYFILE
+pdftk A="$INFILE" B="$EMPTYFILE" cat $PAGEORDER output "$TMPFILE"
+pdfnup --nup 2x1 "$TMPFILE" -o "$OUTFILE"
+rm "$EMPTYFILE"
+rm "$TMPFILE"
